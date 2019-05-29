@@ -53,8 +53,7 @@ void transmitter(StaticJsonDocument<200> doc) {
 }
 
 void readRS485() {
-  if (RS485Serial.available())
-  {
+  if (RS485Serial.available()) {
     digitalWrite(receiverLED, HIGH);
     StaticJsonDocument<200> doc;
     DeserializationError error = deserializeJson(doc, RS485Serial);
@@ -64,7 +63,9 @@ void readRS485() {
       return;
     }
     digitalWrite(receiverLED, LOW);
-    Serial.println("Recebido do Slave");
+//    Serial.println("Recebido do Slave");
     serializeJson(doc, Serial);
+    Serial.println();
+    Serial.flush();
   }
 }
