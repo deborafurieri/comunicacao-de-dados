@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 // estrutura data base
 const Schema = mongoose.Schema({
-  slaveId: { type: Number, required: true },
-  setPoint: { type: Number, required: true },
-  value: { type: Number, required: true },
+  slaveId: { type: Number },
+  setPoint: { type: Number },
+  value: { type: Number },
   createdAt: { type: Date },
   updatedAt: { type: Date }
 });

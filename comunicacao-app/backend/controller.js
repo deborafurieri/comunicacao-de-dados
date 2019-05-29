@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 const Data = mongoose.model('Data');
-// const Data = require ('./models/Data');
 
 module.exports.findData = (req, res) => {
-  Data.findOne(['slaveId', 'setPoint', 'value'], (err, data) => {
+  Data.find({ slaveId: 1 }, (err, data) => {
     res.json(data);
-    console.log('data', data)
+    console.log('data', data);
   });
 }
 
