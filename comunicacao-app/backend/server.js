@@ -20,9 +20,6 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger("dev"));
 
-//importa router e da append /api para http requests
-const router = require("./routes")
-app.use("/api", router);
 
 // inicia o backend na porta escolhida
 // app.listen(API_PORT, () => console.log(`OUVINDO A PORTA ${API_PORT}`));
@@ -33,16 +30,20 @@ const dbRoute = "mongodb+srv://deborafurieri:UiwEcd7IWWtgQ5Pl@cluster0-sdesr.mon
 mongoose.connect(
   dbRoute,
   { useNewUrlParser: true }
-);
-
+  );
+  
 // import model
 require('./models/Data');
 
 // import function
 const functions = require('./functions');
 
+//importa router e da append /api para http requests
+const router = require("./routes")
+app.use("/api", router);
+
+// atribuindo conexao mongoose a variável
 let db = mongoose.connection;
-const collection = db.collection('dados');
 
 // checa se a conexão com a database foi realizada com sucesso
 db.once("open", () => console.log("conectado a database"));
@@ -71,9 +72,13 @@ socket.on('action', (msg) => {
 });
 
 parser.on('data', (data) => {
-  var allData = JSON.parse(data);
-  console.log('data', allData);
-  functions.response(1, allData, socket.emit('data', allData));
+  try {
+    var allData = JSON.parse(data);
+    // console.log('data', allData);
+    functions.response(allData, socket.emit('data', allData));
+  } catch(e) {
+    console.log('erro', e);
+  }
 });
 
 socket.on('disconnect', function() {

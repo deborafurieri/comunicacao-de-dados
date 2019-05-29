@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Data = mongoose.model('Data');
-// const Data = require ('./models/Data');
 
 module.exports.response = (response, callback) => {
   Data.updateMany({ online: true }, { online: false }, (err, raw) => {
@@ -9,12 +8,16 @@ module.exports.response = (response, callback) => {
       return false;
     }
     for (let res in response) {
-      Data.findOne({ serial: response[res]['id'] }, (err, $sensor) => {
+      // eslint-disable-next-line no-loop-func
+      Data.findOne({ serial: response[res][1] }, (err, $sensor) => {
         let sensor = $sensor;
-
-        sensor.slaveId = response[res]['configs'][0];
-        sensor.setPoint = response[res]['configs'][1];
-        sensor.value = response[res]['configs'][2];
+        if (!sensor) {
+          sensor = new Data();
+        }
+        // console.log('response', response[res][1]);
+        sensor.slaveId = response.slaveId;
+        sensor.setPoint = response.setPoint;
+        sensor.value = response.value;
 
         sensor.save((err, result) => {
           if (!err) {
