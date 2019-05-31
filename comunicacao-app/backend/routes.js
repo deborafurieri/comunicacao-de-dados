@@ -10,4 +10,12 @@ router.get('/getData', controller.findData);
 
 router.post('/postData', controller.update);
 
+router.get('/send', (req, res) => {
+  res.io.emit('test', {
+    msg : "tessste"
+  });
+
+  res.json({ teste : "ok"})
+});
+
 module.exports = router;

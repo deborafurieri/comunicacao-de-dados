@@ -7,12 +7,17 @@ const path = require('path');
 
 // const API_PORT = 3001;
 const app = express();
-// const router = express.Router();
+
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const socket = require('socket.io-client')('http://localhost:3000');
+
 
 app.use(cors());
+
+app.use((req, res, next) => {
+  res.io = io;
+  next();
+});
 
 // passa o request body para o formato json
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,7 +58,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 var SerialPort = require("serialport");
 const Readline = SerialPort.parsers.Readline;
 const serial = new SerialPort(
-  "/dev/cu.SLAB_USBtoUART4",
+  "/dev/cu.SLAB_USBtoUART",
   { baudRate: 115200 },
 );
   
@@ -67,22 +72,23 @@ serial.on('error', function( msg ) {
   console.log("First Serial port error: " + msg );
 });
 
-socket.on('action', (msg) => {
-  serial.write(JSON.stringify(msg));
-});
-
 parser.on('data', (data) => {
-  try {
+  io.emit("test", data);
+  /*try {
     var allData = JSON.parse(data);
-    // console.log('data', allData);
+     
     functions.response(allData, socket.emit('data', allData));
   } catch(e) {
-    console.log('erro', e);
-  }
+    console.log('erro no parser', e);
+  }*/
 });
 
-socket.on('disconnect', function() {
-  console.log('disconnect');
+io.on("connection", (client) => {
+  console.log('user connected');
+});
+
+io.on('disconnect', function() {
+  console.flog('disconnect');
 })
 
 server.listen(3001, function(){

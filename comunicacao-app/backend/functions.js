@@ -18,15 +18,25 @@ module.exports.response = (response, callback) => {
         sensor.setPoint = response.setPoint;
         sensor.value = response.value;
         sensor.online = true;
-
-        sensor.save((err, result) => {
-          if (!err) {
-              if (callback && typeof (callback) === "function") callback();
-              console.log("Sucesso!", sensor);
-          } else {
-              console.error("Erro: ", err);
-          }
-        });
+        if(sensor.slaveId === 1){
+          sensor.updateOne((err, result) => {
+            if (!err) {
+                if (callback && typeof (callback) === "function") callback();
+                console.log("Sucesso ao atualizar!", sensor);
+            } else {
+                console.error("Erro: ", err);
+            }
+          });
+        } else {
+          sensor.save((err, result) => {
+            if (!err) {
+                if (callback && typeof (callback) === "function") callback();
+                console.log("Sucesso ao adicionar!", sensor);
+            } else {
+                console.error("Erro: ", err);
+            }
+          });
+        }
       });
     }
   });

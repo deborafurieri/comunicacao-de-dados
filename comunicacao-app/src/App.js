@@ -1,27 +1,40 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Row, Col } from 'react-materialize';
+import { Row } from 'react-materialize';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import Paper from '@material-ui/core/Paper';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import socketIOClient from "socket.io-client";
 
-import Table from './TableData'
+import TableData from './TableData'
 
 class App extends Component {
   // inicializando os estados 
   state = {
-    data: [],
-    message: null,
-    slaveId: 1,
-    setPoint: null,
-    value: null,
+    data: {
+      slaveId: 1,
+      setPoint: null,
+      value: null,
+      createdAt: null,
+      updateAt: null,
+    },
     intervalIsSet: false,
+    isLoading: false,
   };
 
   // quando o componente monta, ele da um fetch em todo data existente no db
   componentDidMount() {
     this.getDataFromDb();
-    if (!this.state.intervalIsSet) {
-      let interval = setInterval(this.getDataFromDb, 1000);
-      this.setState({ intervalIsSet: interval });
-    }
+    // if (!this.state.intervalIsSet) {
+    //   let interval = setInterval(this.getDataFromDb, 1000);
+    //   this.setState({ intervalIsSet: interval });
+    // }
+
+
+    const socket = socketIOClient("http://localhost:3001");
+    socket.on("test", data => console.log(data));
   }
 
   // mata o processo
@@ -34,20 +47,15 @@ class App extends Component {
 
   // metodo get que usa a api backend, fetch data da nossa data base
   getDataFromDb = () => {
-    fetch("http://localhost:3001/api/getData", {
-        method: "GET",
-        headers: new Headers({
-          'Content-Type': 'application/json',
-      })
-    })
+    fetch("http://localhost:3001/api/getData")
       .then(data => data.json())
-      .then(res => this.setState({ data: res.data }))
+      .then(res => this.setState({ data: res.data, isLoading: false }))
       .catch(error => console.error(error));
   };
 
   // metodo post que usa a api backend, att valor de setpoint
   putDataToDB = () => {
-    let currentSetPoint = this.state.data.map(data => data.setPoint);
+    let currentSetPoint = this.state.setPoint;
 
     axios.post("http://localhost:3001/api/update", {
       slaveId: 1,
@@ -57,22 +65,20 @@ class App extends Component {
 
   // front
   render() {
-    const { data } = this.state;
-    console.log('data', data)
+    const dados = [
+      {
+        slaveId: 1,
+        setPoint: 24.5,
+        value: 0.112,
+      },
+      {
+        slaveId: 1,
+        setPoint: 24.5,
+        value: 0.113,
+      }
+    ];
     return (
       <div>
-        data ? 
-          <ul>
-            {data.map(dat => (
-              <li style={{ padding: "10px" }} key={data.value}>
-                <span style={{ color: "gray" }}> slaveId: </span> {dat.slaveId} <br />
-                <span style={{ color: "gray" }}> setPoint: </span> {dat.setPoint} <br />
-                <span style={{ color: "gray" }}> data: </span>
-                {dat.value}
-              </li>
-            ))}
-          </ul>
-        : ()
         <Row>
           <div style={{ padding: "10px" }}>
             <input
@@ -87,9 +93,30 @@ class App extends Component {
           </div>
         </Row>
         <Row>
-          <Col><Table /></Col>
+          <Paper  
+            style={{ 
+              width: "60%",
+              marginTop: 10,
+              overflowX: 'auto',
+            }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Server ID</TableCell>
+                  <TableCell align="right">SetPoint</TableCell>
+                  <TableCell align="right">Data</TableCell>
+                </TableRow>
+              </TableHead>
+              {dados.map((dado) => (
+                <TableData 
+                  slaveId={dado.slaveId}
+                  setPoint={dado.setPoint}
+                  value={dado.value}
+                />
+              ))}
+          </Table>
+        </Paper>
         </Row>
-        
       </div>
     );
   }
