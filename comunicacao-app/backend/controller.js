@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 const Data = mongoose.model('Data');
 
 module.exports.findData = (req, res) => {
-  Data.find({ slaveId: 1 }, (err, data) => {
-    res.json(data);
-    console.log('data', data);
+  Data.find({ online: true }, ['online', 'slaveId', 'setPoint', 'value', 'createdAt', 'updatedAt'], (err, data) => {
+    try { 
+      res.json(data);
+      console.log('data', data);
+    } catch(e){
+      console.log(err)
+    }
   });
 }
 

@@ -6,7 +6,7 @@ const Schema = mongoose.Schema({
   setPoint: { type: Number },
   value: { type: Number },
   createdAt: { type: Date },
-  updatedAt: { type: Date }
+  updatedAt: { type: Date },
 });
 
 Schema.pre('save', function (next) {
