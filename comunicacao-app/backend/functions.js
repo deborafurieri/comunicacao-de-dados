@@ -9,20 +9,20 @@ module.exports.response = (response, callback) => {
     }
     for (let res in response) {
       // eslint-disable-next-line no-loop-func
-      Data.findOne({ serial: response[res][1] }, (err, $sensor) => {
+      Data.findOne({ _id: response[res]._id }, (err, $sensor) => {
         let sensor = $sensor;
         if (!sensor) {
           sensor = new Data();
         }
-        // console.log('response', response[res][1]);
         sensor.slaveId = response.slaveId;
         sensor.setPoint = response.setPoint;
         sensor.value = response.value;
+        sensor.online = true;
 
         sensor.save((err, result) => {
           if (!err) {
               if (callback && typeof (callback) === "function") callback();
-              console.log("Sucesso!");
+              console.log("Sucesso!", sensor);
           } else {
               console.error("Erro: ", err);
           }
