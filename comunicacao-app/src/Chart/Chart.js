@@ -11,7 +11,7 @@ const Chart = (props) => {
     <RTChart
       style={
         {
-          width: '50%',
+          width: '80%',
           marginTop: '50px',
           marginLeft: "10px",
         }
