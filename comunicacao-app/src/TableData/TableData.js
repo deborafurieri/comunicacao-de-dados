@@ -27,9 +27,9 @@ const CustomizedTables = (props) => {
   return (
     <TableBody>
       <StyledTableRow>
-        <StyledTableCell align="right">{props.slaveId}</StyledTableCell>
-        <StyledTableCell align="right">{props.setPoint}</StyledTableCell>
-        <StyledTableCell align="right">{props.value}</StyledTableCell> 
+        <StyledTableCell align="center">{props.slaveId}</StyledTableCell>
+        <StyledTableCell align="center">{props.setPoint}</StyledTableCell>
+        <StyledTableCell align="center">{props.value}</StyledTableCell> 
       </StyledTableRow>
     </TableBody>
   );
