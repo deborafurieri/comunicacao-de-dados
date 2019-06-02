@@ -1,12 +1,13 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const express = require("express");
-var cors = require('cors');
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const path = require('path');
 
-// const API_PORT = 3001;
 const app = express();
+
+// const socket = require('socket.io-client')('http://localhost:3001');
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
@@ -25,34 +26,9 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger("dev"));
 
-
-// inicia o backend na porta escolhida
-// app.listen(API_PORT, () => console.log(`OUVINDO A PORTA ${API_PORT}`));
-
-// MongoDB database
-const dbRoute = "mongodb+srv://deborafurieri:UiwEcd7IWWtgQ5Pl@cluster0-sdesr.mongodb.net/test?retryWrites=true";
-
-mongoose.connect(
-  dbRoute,
-  { useNewUrlParser: true }
-  );
-  
-// import model
-require('./models/Data');
-
-// import function
-const functions = require('./functions');
-
 //importa router e da append /api para http requests
 const router = require("./routes")
 app.use("/api", router);
-
-// atribuindo conexao mongoose a variável
-let db = mongoose.connection;
-
-// checa se a conexão com a database foi realizada com sucesso
-db.once("open", () => console.log("conectado a database"));
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 // Config serial port
 var SerialPort = require("serialport");
@@ -74,21 +50,19 @@ serial.on('error', function( msg ) {
 
 parser.on('data', (data) => {
   io.emit("test", data);
-  /*try {
-    var allData = JSON.parse(data);
-     
-    functions.response(allData, socket.emit('data', allData));
-  } catch(e) {
-    console.log('erro no parser', e);
-  }*/
 });
 
-io.on("connection", (client) => {
+io.on("connection", (function (socket) {
   console.log('user connected');
-});
+  // recebe client data
+  socket.on('client_data', function(setPoint){
+    process.stdout.write(setPoint);
+    // console.log(setPoint)
+  });
+}));
 
 io.on('disconnect', function() {
-  console.flog('disconnect');
+  console.log('disconnect');
 })
 
 server.listen(3001, function(){
