@@ -1,19 +1,5 @@
 #include <HardwareSerial.h>
 #include <ArduinoJson.h>
-
-#include <OneWire.h>
-#include <DallasTemperature.h>
-OneWire oneWire(25);
-DallasTemperature sensors(&oneWire);
-DeviceAddress sensor1;
-
-const int RelePin = 34; // pino ao qual o Módulo Relé está conectado
-int incomingByte;      // variavel para ler dados recebidos pela serial
-float sp; // set point
-float hist; // histerese
-float tempC;
-int b;
-
 #define RS485Enable 21   //RS485 Direction control 21
 
 #define receiverLED         26
@@ -24,7 +10,7 @@ int b;
 HardwareSerial RS485Serial(1); // RX, TX
 int ID;
 void setup() {
-  ID = 1;
+  ID = 2;
   pinMode(RS485Enable, OUTPUT);
   pinMode(onLED, OUTPUT);
   pinMode(receiverLED, OUTPUT);
@@ -35,35 +21,9 @@ void setup() {
   digitalWrite(RS485Enable, LOW);
   digitalWrite(onLED, HIGH);
   //digitalWrite(setPointLED, HIGH);
-
-  sp = 30;
-  hist = 0;
-  b = 0;
-  sensors.begin();
-  sensors.getDeviceCount();
-  pinMode(RelePin, OUTPUT); // seta o pino como saída
-  // Localiza e mostra enderecos dos sensores
-  Serial.println("Localizando sensores DS18B20...");
-  Serial.print("Foram encontrados ");
-  Serial.print(sensors.getDeviceCount(), DEC);
-  Serial.println(" sensores.");
-  if (!sensors.getAddress(sensor1, 0))
-    Serial.println("Sensores nao encontrados !");
-  // Mostra o endereco do sensor encontrado no barramento
-  Serial.println();
-  Serial.println();
 }
 
 void loop() {
-  sensors.requestTemperatures();
-  tempC = sensors.getTempC(sensor1);
-  Serial.print("Temperatura: ");
-  Serial.println(tempC);
-  if (tempC >= (sp + hist)) {
-    digitalWrite(setPointLED, HIGH); //aciona o pino
-  }else{
-    digitalWrite(setPointLED,LOW);
-  }
   StaticJsonDocument<200> doc;
   if (RS485Serial.available())
   {
@@ -77,10 +37,16 @@ void loop() {
     digitalWrite(receiverLED, LOW);
   }
   const int slaveID = doc["slaveId"];
+  int sensorRead = analogRead(34);
+  float converted = sensorRead * 3.3 / 4095;
+  if(converted>3.0)digitalWrite(setPointLED,HIGH);
+  else{
+    digitalWrite(setPointLED,LOW);
+  }
   if (slaveID == ID)
   {
-    //       Serial.println("Cheguei");
-    doc["value"] = tempC;
+    doc["value"] = converted;
+    //    serializeJsonPretty(doc, Serial);
     digitalWrite(RS485Enable, HIGH);
     digitalWrite(transmitterLED, HIGH);
     serializeJson(doc, RS485Serial);
