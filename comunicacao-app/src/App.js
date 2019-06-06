@@ -16,16 +16,24 @@ class App extends Component {
     super(props);
 
     this.state = {
-      data: [
+      firstSlave: [
         {
-          slaveId: 1,
-          setPoint: null,
+          slaveId: null,
+          setPoint: 0,
           value: null,
         }
       ],
-      setPoint: 24.5,
+      secondSlave: [
+        {
+          slaveId: null,
+          setPoint: 0,
+          value: null,
+        }
+      ],
+      setPoint: 0,
       intervalIsSet: false,
-      value: 0,
+      valueFirst: 0,
+      valueSecond: 0,
     };
   }
 
@@ -49,8 +57,12 @@ class App extends Component {
     const socket = socketIOClient('http://localhost:3001');
     socket.on('test', data => {
       let allData = JSON.parse(data);
-      let value = allData.value;
-      this.setState({ data: [allData], value: value });
+      let slaveId = allData.slaveId;
+      if (slaveId === 1) {
+        this.setState({ firstSlave: [allData], valueFirst: allData.value });
+      } else {
+        this.setState({ secondSlave: [allData], valueSecond: allData.value });
+      }
     });
   }
 
@@ -100,7 +112,7 @@ class App extends Component {
                     <TableCell style={{ fontWeight: 'bold' }} align="center">Data</TableCell>
                   </TableRow>
                 </TableHead>
-                  {this.state.data.map((dado) => (
+                  {this.state.firstSlave.map((dado) => (
                     <TableData 
                       //slaveId={dado.slaveId} // primeiro escravo
                       slaveId={1}
@@ -108,7 +120,7 @@ class App extends Component {
                       value={dado.value}
                     />
                   ))}
-                  {this.state.data.map((dado) => (
+                  {this.state.secondSlave.map((dado) => (
                     <TableData 
                       // slaveId={dado.slaveId} // segundo escravo
                       slaveId={2}
@@ -121,8 +133,8 @@ class App extends Component {
           </Row>
           <Row>
             <Chart 
-              valueFirstSlave={this.state.value}
-              valueSecondSlave={this.state.value}
+              valueFirstSlave={this.state.valueFirst}
+              valueSecondSlave={this.state.valueSecond}
             />
           </Row>
         </Row>

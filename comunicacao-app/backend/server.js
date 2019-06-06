@@ -49,6 +49,7 @@ serial.on('error', function( msg ) {
 });
 
 parser.on('data', (data) => {
+  console.log(data)
   io.emit("test", data);
 });
 
@@ -57,6 +58,7 @@ io.on("connection", (function (socket) {
   // recebe client data
   socket.on('client_data', function(setPoint){
     process.stdout.write(setPoint);
+    serial.write(setPoint);
     // console.log(setPoint)
   });
 }));
