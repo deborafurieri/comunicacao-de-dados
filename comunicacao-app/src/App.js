@@ -59,9 +59,9 @@ class App extends Component {
       let allData = JSON.parse(data);
       let slaveId = allData.slaveId;
       if (slaveId === 1) {
-        this.setState({ firstSlave: [allData], valueFirst: allData.value });
+        this.setState({ firstSlave: [allData], valueFirst: allData.value.toFixed(3) });
       } else {
-        this.setState({ secondSlave: [allData], valueSecond: allData.value });
+        this.setState({ secondSlave: [allData], valueSecond: allData.value.toFixed(3) });
       }
     });
   }

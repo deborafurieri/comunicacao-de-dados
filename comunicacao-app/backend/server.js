@@ -7,8 +7,6 @@ const path = require('path');
 
 const app = express();
 
-// const socket = require('socket.io-client')('http://localhost:3001');
-
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 

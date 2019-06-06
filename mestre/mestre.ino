@@ -22,24 +22,28 @@ void setup() {
 }
 
 void loop() {
-  StaticJsonDocument<200> doc;
-  doc["slaveId"] = 1;
-  doc["setPoint"] = 24.5;
-  doc["value"] = 0.0;
-  transmitter(doc);
-//  Serial.println("AAAAAA******");
+  for (int i = 1; i < 3; i++) {
+    StaticJsonDocument<200> doc;
+    doc["slaveId"] = i;
+//    doc["setPoint"] = 24.5;
+    doc["value"] = 0.0;
+    int incomingByte;
+    incomingByte = Serial.read();
+    doc["setPoint"] = incomingByte;
+    transmitter(doc);
 
-  bool qlqrcoisa = true;
-  long timeAGORA = millis();
-  while (RS485Serial.available() == 0) {
-    if ((millis() - timeAGORA) > 15) {
-      qlqrcoisa = false;
-      break;
+    bool check = true;
+    long timeAGORA = millis();
+    while (RS485Serial.available() == 0) {
+      if ((millis() - timeAGORA) > 15) {
+        check = false;
+        break;
+      }
     }
-  }
-  if (qlqrcoisa) {
-    readRS485();
-//    Serial.println("AAAAAA");
+    if (check) {
+      readRS485();
+      //    Serial.println("AAAAAA");
+    }
   }
 }
 
@@ -53,7 +57,8 @@ void transmitter(StaticJsonDocument<200> doc) {
 }
 
 void readRS485() {
-  if (RS485Serial.available()) {
+  if (RS485Serial.available())
+  {
     digitalWrite(receiverLED, HIGH);
     StaticJsonDocument<200> doc;
     DeserializationError error = deserializeJson(doc, RS485Serial);
@@ -63,9 +68,9 @@ void readRS485() {
       return;
     }
     digitalWrite(receiverLED, LOW);
-//    Serial.println("Recebido do Slave");
     serializeJson(doc, Serial);
-    Serial.println();
-    Serial.flush();
   }
+  Serial.println();
+  Serial.flush();
+  delay(500);
 }
