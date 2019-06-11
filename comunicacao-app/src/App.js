@@ -36,6 +36,7 @@ class App extends Component {
       intervalIsSet: false,
       valueFirst: 0,
       valueSecond: 0,
+      setPoint1: 0,
     };
   }
 
@@ -60,7 +61,7 @@ class App extends Component {
       let allData = JSON.parse(data);
       let slaveId = allData.slaveId;
       if (slaveId === 1) {
-        this.setState({ firstSlave: [allData], valueFirst: allData.value });
+        this.setState({ firstSlave: [allData], valueFirst: allData.value, setPoint1: allData.setPoint });
       } else {
         this.setState({ secondSlave: [allData], valueSecond: allData.value });
       }
@@ -162,12 +163,14 @@ class App extends Component {
             <Col style={{ width: '50%', display: 'inline-block' }}>
               <p style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold'  }}>Escravo 1</p>
               <Chart 
+                setPoint={this.state.setPoint1}
                 valueSlave={this.state.valueFirst}
               />
             </Col>
             <Col style={{ width: '50%', display: 'inline-block' }}>
               <p style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold' }}>Escravo 2</p>
               <Chart 
+                setPoint={this.state.valueSecond}
                 valueSlave={this.state.valueSecond}
               />
             </Col>

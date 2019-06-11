@@ -5,6 +5,7 @@ const Chart = (props) => {
   let data = {
     date: new Date(),
     slave: props.valueSlave,
+    setPoint: props.setPoint,
   };
   return (
     <RTChart
@@ -14,7 +15,8 @@ const Chart = (props) => {
           marginRight: '50px',
         }
       }
-      fields={['slave']}
+      maxValues={10}
+      fields={['setPoint', 'slave']}
       data={data} />
   )
 }

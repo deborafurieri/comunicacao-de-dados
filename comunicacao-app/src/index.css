@@ -16,10 +16,6 @@ code {
     monospace;
 }
 
-.c3-chart-arc .c3-gauge-value {
-  fill: none;
-}
-
-.c3-chart-arcs .c3-chart-arcs-gauge-unit {
+.c3-chart {
   fill: none;
 }

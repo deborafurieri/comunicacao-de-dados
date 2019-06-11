@@ -1,7 +1,11 @@
 #include <HardwareSerial.h>
 #include <ArduinoJson.h>
 #define RS485Enable 21   //RS485 Direction control 21
+#include <WiFiServer.h>
+#include <WiFi.h>
 
+WiFiServer sv(555);//Cria o objeto servidor na porta 555
+WiFiClient cl;//Cria o objeto cliente.
 #define receiverLED         26
 #define onLED         12
 #define transmitterLED 25
@@ -26,7 +30,9 @@ void setup() {
   digitalWrite(RS485Enable, LOW);
   digitalWrite(onLED, HIGH);
   StaticJsonDocument<200> doc;
-
+  WiFi.mode(WIFI_AP);//Define o WiFi como Acess_Point.
+  WiFi.softAP("TrabalhoEmerick", "");//Cria a rede de Acess_Point.
+  sv.begin();//Inicia o servidor TCP na porta declarada no começo.
 }
 
 void loop() {
@@ -35,15 +41,6 @@ void loop() {
     doc["slaveId"] = i;
     doc["setPoint"] = setPoint;
     doc["value"] = datasensor;
-    transmitter(doc);
-    bool check = true;
-    long timeAGORA = millis();
-    while (RS485Serial.available() == 0) {
-      if ((millis() - timeAGORA) > 100) {
-        check = false;
-        break;
-      }
-    }
     if (Serial.available()) {
       StaticJsonDocument<200> doc2;
       DeserializationError error = deserializeJson(doc2, Serial);
@@ -54,7 +51,33 @@ void loop() {
       }
       setPoint = doc2["setPoint"];
     }
-
+    if (cl.connected())//Detecta se há clientes conectados no servidor.
+    {
+      if (cl.available() > 0)//Verifica se o cliente conectado tem dados para serem lidos.
+      {
+        String req = "";
+        while (cl.available() > 0)//Armazena cada Byte (letra/char) na String para formar a mensagem recebida.
+        {
+          char z = cl.read();
+          req += z;
+        }
+        setPoint = req.toFloat();
+      }
+    }
+    else//Se nao houver cliente conectado,
+    {
+      cl = sv.available();//Disponabiliza o servidor para o cliente se conectar.
+      delay(1);
+    }
+    transmitter(doc);
+    bool check = true;
+    long timeAGORA = millis();
+    while (RS485Serial.available() == 0) {
+      if ((millis() - timeAGORA) > 100) {
+        check = false;
+        break;
+      }
+    }
     if (check) {
       readRS485();
     }
