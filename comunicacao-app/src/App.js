@@ -159,13 +159,13 @@ class App extends Component {
           </Row>
           <Row>
             <Col style={{ width: '50%', display: 'inline-block' }}>
-              <p style={{ textAlign: 'center', fontSize: '20px', fontWeight: 'bold'  }}>Escravo 1</p>
+              <p style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold'  }}>Escravo 1</p>
               <Chart 
                 valueSlave={this.state.valueFirst}
               />
             </Col>
             <Col style={{ width: '50%', display: 'inline-block' }}>
-              <p style={{ textAlign: 'center', fontSize: '20px', fontWeight: 'bold' }}>Escravo 2</p>
+              <p style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold' }}>Escravo 2</p>
               <Chart 
                 valueSlave={this.state.valueSecond}
               />
