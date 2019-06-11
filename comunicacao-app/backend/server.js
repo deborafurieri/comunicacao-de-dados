@@ -1,27 +1,18 @@
 const express = require("express");
-const cors = require('cors');
-const bodyParser = require("body-parser");
-const logger = require("morgan");
-const path = require('path');
-
 const app = express();
 
 const server = require('http').Server(app);
 
-const io = require('socket.io')(server);
+server.listen(3001, function(){
+  console.log('ouvindo na porta 3001');
+})
 
-app.use(cors());
+const io = require('socket.io')(server);
 
 app.use((req, res, next) => {
   res.io = io;
   next();
 });
-
-// passa o request body para o formato json
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(logger("dev"));
 
 //importa router e da append /api para http requests
 const router = require("./routes")
@@ -67,8 +58,4 @@ io.on("connection", (function (socket) {
 // encerra conexão
 io.on('disconnect', function() {
   console.log('disconnect');
-})
-
-server.listen(3001, function(){
-  console.log('ouvindo na porta 3001');
 })

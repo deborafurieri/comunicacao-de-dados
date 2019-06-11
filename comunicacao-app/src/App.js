@@ -113,10 +113,12 @@ class App extends Component {
                   {
                     backgroundColor: 'black',
                     color: '#fff',
-                    textShadow: '0px 1px 0px #528009',
                     width: '60px',
                     height: '25px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    borderRadius: 4,
+                    borderWidth: 2,
+                    borderColor: '#0022'
                   }
                 }
               >
