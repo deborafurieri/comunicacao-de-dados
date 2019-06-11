@@ -15,6 +15,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    // cria uma instância que comunica com o backend
     this.socket = socketIOClient('http://localhost:3001');
 
     this.state = {
