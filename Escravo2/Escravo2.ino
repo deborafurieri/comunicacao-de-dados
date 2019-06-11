@@ -39,14 +39,14 @@ void loop() {
   const int slaveID = doc["slaveId"];
   int sensorRead = analogRead(34);
   float converted = sensorRead * 3.3 / 4095;
-  if(converted>3.0)digitalWrite(setPointLED,HIGH);
-  else{
-    digitalWrite(setPointLED,LOW);
+  if (converted > 3.0)digitalWrite(setPointLED, HIGH);
+  else {
+    digitalWrite(setPointLED, LOW);
   }
   if (slaveID == ID)
   {
     doc["value"] = converted;
-    //    serializeJsonPretty(doc, Serial);
+    serializeJsonPretty(doc, Serial);
     digitalWrite(RS485Enable, HIGH);
     digitalWrite(transmitterLED, HIGH);
     serializeJson(doc, RS485Serial);
@@ -55,5 +55,5 @@ void loop() {
     digitalWrite(RS485Enable, LOW);
   }
   doc["slaveID"] = 0;
-  delay(5);
+  delay(50);
 }
