@@ -1,4 +1,3 @@
-// const mongoose = require("mongoose");
 const express = require("express");
 const cors = require('cors');
 const bodyParser = require("body-parser");
@@ -9,7 +8,6 @@ const app = express();
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-
 
 app.use(cors());
 
@@ -55,8 +53,8 @@ io.on("connection", (function (socket) {
   console.log('user connected');
   // recebe client data
   socket.on('client_data', function(setPoint){
-    process.stdout.write(setPoint);
-    serial.write(setPoint);
+    //process.stdout.write(setPoint);
+    serial.write(JSON.stringify(setPoint));
     // console.log(setPoint)
   });
 }));
