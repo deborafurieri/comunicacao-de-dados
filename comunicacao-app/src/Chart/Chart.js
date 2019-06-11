@@ -4,19 +4,17 @@ import RTChart from 'react-rt-chart';
 const Chart = (props) => {
   let data = {
     date: new Date(),
-    FirstSlave: props.valueFirstSlave,
-    SecondSlave: props.valueSecondSlave,
+    slave: props.valueSlave,
   };
   return (
     <RTChart
       style={
         {
-          width: '80%',
-          marginTop: '50px',
-          marginLeft: "10px",
+          marginTop: '20px',
+          marginRight: '50px',
         }
       }
-      fields={['FirstSlave','SecondSlave']}
+      fields={['slave']}
       data={data} />
   )
 }
